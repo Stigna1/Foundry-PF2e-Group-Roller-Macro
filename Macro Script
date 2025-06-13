@@ -1,0 +1,186 @@
+if ( !game.user.isGM ) { return ui.notifications.info("This is a GM only macro") }
+
+let skilltype;
+skilltype = await new Promise((resolve) => {
+
+  new Dialog({
+
+title: 'Skill Type?',
+    buttons:{
+    0: {label: 'Athletics', callback: () => {resolve(0);}},
+    1: {label: 'Arcana', callback: () => {resolve(1);}},
+    2: {label: 'Athletics', callback: () => {resolve(2);}},
+    3: {label: 'Crafting', callback: () => {resolve(3);}},
+    4: {label: 'Deception', callback: () => {resolve(4);}},
+    5: {label: 'Diplomacy', callback: () => {resolve(5);}},
+    6: {label: 'Intimidation', callback: () => {resolve(6);}},
+    7: {label: 'Medicine', callback: () => {resolve(7);}},
+    8: {label: 'Nature', callback: () => {resolve(8);}},
+      9: {label: 'Occultism', callback: () => {resolve(9);}},
+      10: {label: 'Performance', callback: () => {resolve(10);}},
+      11: {label: 'Religion', callback: () => {resolve(11);}},
+      12: {label: 'Society', callback: () => {resolve(12);}},
+      13: {label: 'Stealth', callback: () => {resolve(13);}},
+      14: {label: 'Survival', callback: () => {resolve(14);}},
+      15: {label: 'Thievery', callback: () => {resolve(15);}},
+
+      
+    },
+    render:() => {
+      let myElem = [...document.getElementsByClassName("dialog-buttons")].pop();
+      if (myElem.style === undefined)
+      {
+        myElem = [...document.getElementsbyClassName("dialog-buttons")].pop();
+      }
+        myElem.style.display = "grid";
+        myElem.style.gridTemplateColumns = "repeat(6,1fr)";
+        myElem.style.gap = "1px 1px";
+    }
+    
+  }, {width: 600}).render(true);
+            
+}
+                             
+                             
+)
+
+var SkillString = `gfdsgfs`;
+var CheckString = 'fdsdfs';
+switch (skilltype)
+  {
+    case 0:
+      SkillString = ` Acrobatics `;
+      CheckString =  `acrobatics`;
+      break;
+       case 1:
+      SkillString = ` Arcana `;
+      CheckString =  `arcana`;
+      break;
+       case 2:
+      SkillString = ` Athletics `;
+      CheckString =  `athletics`;
+      break;
+       case 3:
+      SkillString = ` Crafting `;
+      CheckString =  `crafting`;
+      break;
+       case 4:
+      SkillString = ` Deception `;
+      CheckString =  `deception`;
+      break;
+       case 5:
+      SkillString = ` Diplomacy `;
+      CheckString =  `diplomacy`;
+      break;
+       case 6:
+      SkillString = ` Intimidation `;
+      CheckString =  `intimidation`;
+      break;
+       case 7:
+      SkillString = ` Medicine `;
+      CheckString =  `medicine`;
+      break;
+       case 8:
+      SkillString = ` Nature `;
+      CheckString =  `nature`;
+      break;
+       case 9:
+      SkillString = ` Occultism `;
+      CheckString =  `occultism`;
+      break;
+       case 10:
+      SkillString = ` Performance `;
+      CheckString =  `performance`;
+      break;
+       case 11:
+      SkillString = ` Religion `;
+      CheckString =  `religion`;
+      break;
+       case 12:
+      SkillString = ` Society `;
+      CheckString =  `society`;
+      break;
+       case 13:
+      SkillString = ` Stealth `;
+      CheckString =  `stealth`;
+      break;
+       case 14:
+      SkillString = ` Survival `;
+      CheckString =  `survival`;
+      break;
+       case 15:
+      SkillString = ` Thievery `;
+      CheckString =  `thievery`;
+      break;
+      
+      
+      
+  }
+
+const exceptions = [
+	"vehicle",
+	"loot",
+	"hazard",
+	"party",
+];
+let content = `<strong>Group` + SkillString + `Roller</strong>
+		<table>
+		<tr>
+			<th style="text-align:left">Name</th>
+			<th style="text-align:center">Roll + Mod</th>
+			<th style="text-align:center">Total</th>
+		</tr>`;
+{
+const skillarray = [-5];
+for (const t of canvas.tokens.placeables)
+    {
+   if (!t.actor)
+   {
+     continue;
+   }
+      if (exceptions.includes(t.actor.type) == false && t.actor.hasPlayerOwner == true)
+      {
+        skillarray.push(t.actor.skills[CheckString].dc - 10);
+      }
+    }
+for ( const t of canvas.tokens.placeables) {
+    if ( !t.actor ) {
+        ui.notifications.error(`Token named '${t.name}' with id '${t.id}' has no actor data!`);
+        continue;
+    }
+	if ( !exceptions.includes(t.actor.type) && t.actor.hasPlayerOwner ) {
+      
+      if(Math.max(...skillarray) == t.actor.skills[CheckString].dc - 10)
+      {
+		const {result,total,dice} = await new Roll(`1d20 + ${t.actor.skills[CheckString].dc - 10}`).evaluate();
+		const userId = Object.keys(t.actor.ownership).find(f => f !== "default" && !game.users.get(f).isGM);
+		const userColor = game.users.get(userId)?.color ?? "grey";
+		let color = "";
+		if ( dice[0].total === 1 ) {
+			color = `;font-size:115%;color:red`;
+		}
+		else if ( dice[0].total === 20 ) {
+			color = `;font-size:115%;color:green`;
+		}
+		else {
+			color = `;color:blue`;
+		}
+		content += `
+			<tr>
+			<th style="color:${userColor};text-shadow: 1px 1px 1px black">${t.actor.name}</th>
+			<td style="text-align:center">${result}</td>
+			<th style="text-align:center${color}">${total}</th>
+			</tr>`;
+	}
+    }
+}
+}
+
+
+content += `</table>`;
+
+await ChatMessage.create({
+	content,
+	type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+	whisper: [game.userId]
+});
