@@ -14,3 +14,5 @@ Notes:
     • The macro tallies player characters in the current screen. This means that the character must be present in the screen to be included. It determines which characters are player characters by checking for each player's corresponding actor sheet in player preferences, so also make sure that each player's player prefs include their char sheet. This also means that stuff like skilled Eidolons will get passed over.
     • The macro is made for PF2e, and I don't expect it to be compatable with other systems.
     • This work is based heavily on the Group Perception Roller and Recall Knowledge macros by Symon S as part of PF2e Toolbelt. Big ups there.
+
+    P.s It's worth noting that I'm not much familiar with Javascript, Foundry module production, OR github, so this is unlikely to be regularily updated/maintained. S' just something I cobbled together 'cuz I needed for my own table (for rolling various skill checks to discover points of interest as the party explores a hexcrawl map, specifically) , and I figured I'd put it out into the world in case other people could also benefit from it.
